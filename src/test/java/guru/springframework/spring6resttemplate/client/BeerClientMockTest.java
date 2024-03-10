@@ -29,8 +29,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withAccepted;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
 
 /**
  * Created by jt, Spring Framework Guru.
@@ -68,6 +67,20 @@ public class BeerClientMockTest {
     }
 
     @Test
+    void testUpdateBeerById() {
+        server.expect(method(HttpMethod.PUT))
+                .andExpect(requestToUriTemplate(URL + BeerClientImpl.GET_BEER_BY_ID,beerDTO.getId(), beerDTO))
+                .andRespond(withNoContent());
+
+
+        mockGetOperation();
+
+
+        BeerDTO updatedBeer=beerClient.updateBeerById(beerDTO.getId(), beerDTO);
+        assertThat(updatedBeer.getId()).isEqualTo(beerDTO.getId());
+    }
+
+    @Test
     void testCreateBeer() {
         URI uri= UriComponentsBuilder.fromPath(BeerClientImpl.GET_BEER_BY_ID)
                         .build(beerDTO.getId());
@@ -78,9 +91,7 @@ public class BeerClientMockTest {
                 .andRespond(withAccepted().location(uri));
 
 
-        server.expect(method(HttpMethod.GET))
-                .andExpect(requestToUriTemplate(URL + BeerClientImpl.GET_BEER_BY_ID, beerDTO.getId()))
-                .andRespond(withSuccess(beerDtoJson, MediaType.APPLICATION_JSON));
+        mockGetOperation();
 
         BeerDTO createdBeer=beerClient.createBeer(beerDTO);
         assertThat(createdBeer.getId()).isEqualTo(beerDTO.getId());
@@ -90,13 +101,16 @@ public class BeerClientMockTest {
     void testGetById() throws JsonProcessingException {
 
 
-
-        server.expect(method(HttpMethod.GET))
-                .andExpect(requestToUriTemplate(URL + BeerClientImpl.GET_BEER_BY_ID, beerDTO.getId()))
-                .andRespond(withSuccess(beerDtoJson, MediaType.APPLICATION_JSON));
+        mockGetOperation();
 
         BeerDTO responseDto=beerClient.getBeerById(beerDTO.getId());
         assertThat(responseDto.getId()).isEqualTo(beerDTO.getId());
+    }
+
+    private void mockGetOperation() {
+        server.expect(method(HttpMethod.GET))
+                .andExpect(requestToUriTemplate(URL + BeerClientImpl.GET_BEER_BY_ID, beerDTO.getId()))
+                .andRespond(withSuccess(beerDtoJson, MediaType.APPLICATION_JSON));
     }
 
     @Test
