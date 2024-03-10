@@ -17,7 +17,10 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 public class BeerClientImpl implements BeerClient {
-//    public static final String BASE_URL="http://localhost:8080";
+
+    private final RestTemplateBuilder restTemplateBuilder;
+
+    //    public static final String BASE_URL="http://localhost:8080";
     public static final String GET_BEER_PATH="/api/v1/beer";
     public static final String GET_BEER_BY_ID="/api/v1/beer/{beerId}";
 
@@ -47,7 +50,6 @@ public class BeerClientImpl implements BeerClient {
         return restTemplate.getForObject(uri.getPath(),BeerDTO.class);
     }
 
-    private final RestTemplateBuilder restTemplateBuilder;
 
     @Override
     public BeerDTO getBeerById(UUID beerId) {

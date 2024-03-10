@@ -11,7 +11,7 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 
 @Configuration
 public class RestTemplateConfigBuilder {
-    @Value("${rest.template.rootUurl}")
+    @Value("${rest.template.rootUrl}")
     String rootUrl ;
 
     @Bean
